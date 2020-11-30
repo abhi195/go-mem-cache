@@ -4,6 +4,8 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+
+	memcache "github.com/abhi195/go-mem-cache"
 )
 
 const (
@@ -17,11 +19,11 @@ const (
 
 var (
 	port  int
-	cache map[string]string
+	cache *memcache.MemCache
 )
 
 func init() {
-	cache = make(map[string]string)
+	cache = memcache.New()
 	port = 8080
 }
 

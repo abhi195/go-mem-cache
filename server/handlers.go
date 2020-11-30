@@ -26,7 +26,7 @@ func getCacheHandler(w http.ResponseWriter, r *http.Request) {
 		log.Print("get cache request without key.")
 		return
 	}
-	value, exist := cache[key]
+	value, exist := cache.Get(key)
 	if !exist {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("key not present in the cache"))
@@ -50,6 +50,6 @@ func postCacheHandler(w http.ResponseWriter, r *http.Request) {
 		log.Print("post cache request without value.")
 		return
 	}
-	cache[key] = string(reqBody)
+	cache.Set(key, string(reqBody))
 	w.WriteHeader(http.StatusCreated)
 }
