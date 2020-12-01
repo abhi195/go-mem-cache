@@ -1,0 +1,58 @@
+{
+	"info": {
+		"_postman_id": "540a26f5-f011-429f-a746-1878bca494f5",
+		"name": "go-mem-cache",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "cache_get",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/cache/foo",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"cache",
+						"foo"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "cache_set",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "bar"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/cache/foo",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"cache",
+						"foo"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
