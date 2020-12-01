@@ -46,7 +46,7 @@ GET         /api/v1/cache/{key}
 POST        /api/v1/cache/{key}
 ```
 
-Please refer to [go-mem-cache.postman_collection.json](https://github.com/abhi195/go-mem-cache/blob/master/go-mem-cache.postman_collection.json) file for sample requests.
+Please import [go-mem-cache.postman_collection.json](https://github.com/abhi195/go-mem-cache/blob/master/go-mem-cache.postman_collection.json) for sample requests.
 
 ### Starting HTTP Server
 
