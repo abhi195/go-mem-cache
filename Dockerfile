@@ -6,7 +6,8 @@ WORKDIR /tmp/go-mem-cache
 COPY . .
 
 # build go executable
-RUN go build -o ./out/cache-server server/*
+RUN go test \
+    && go build -o ./out/cache-server server/*
 
 # start fresh with only alpine
 FROM alpine:3.12.1
