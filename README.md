@@ -73,5 +73,6 @@ docker run --rm -i -p 8080:8080 go-mem-cache
 
 ## Future work
 
-- Extend the cache to support more operations
+- Extend the cache to support more operations.
 - Swap custom cache implementation with widely used cache implementations like [github.com/patrickmn/go-cache](https://github.com/patrickmn/go-cache) or [github.com/allegro/bigcache](https://github.com/allegro/bigcache) which provides richer functionalities.
+- Http server logging interceptor to log requests & responses
