@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"runtime"
 	"sync"
 	"time"
 )
@@ -67,22 +68,34 @@ func (mc *MemCache) evictExpired() {
 
 type cleaner struct {
 	interval time.Duration
+	stop     chan bool
 }
 
 func (c *cleaner) Run(mc *MemCache) {
 	ticker := time.NewTicker(c.interval)
-	for range ticker.C {
-		mc.evictExpired()
+	defer ticker.Stop()
+	for {
+		select {
+		case <-c.stop:
+			return
+		case <-ticker.C:
+			mc.evictExpired()
+		}
 	}
 }
 
 func runCleaner(mc *MemCache, ci time.Duration) {
 	c := &cleaner{
 		interval: ci,
+		stop:     make(chan bool),
 	}
 
 	mc.cleaner = c
 	go c.Run(mc)
+}
+
+func stopCleaner(mc *MemCache) {
+	mc.cleaner.stop <- true
 }
 
 func newCache(ttl time.Duration) *MemCache {
@@ -102,5 +115,6 @@ func New() *MemCache {
 func NewWith(itemTTL time.Duration, cleanupInterval time.Duration) *MemCache {
 	mc := newCache(itemTTL)
 	runCleaner(mc, cleanupInterval)
+	runtime.SetFinalizer(mc, stopCleaner)
 	return mc
 }
