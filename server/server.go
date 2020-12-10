@@ -13,6 +13,9 @@ const (
 	apiVersion  = "v1"
 	apiBasePath = "/api/" + apiVersion + "/"
 
+	// health check path
+	healthCheckPath = "/health"
+
 	// path to cache.
 	cachePath = apiBasePath + "cache/"
 )
@@ -32,12 +35,17 @@ func init() {
 
 func main() {
 
-	// cache request handler
-	h := cacheRequestHandler()
-	// httpsnooping wrapper handler
-	wh := loggingMiddlewareHandler(h)
+	// handlers
+	ch := cacheRequestHandler()
+	hh := healthCheckHandler()
+
+	// httpsnooping wrapper handlers
+	cwh := loggingMiddlewareHandler(ch)
+	hwh := loggingMiddlewareHandler(hh)
+
 	// handling api paths
-	http.Handle(cachePath, wh)
+	http.Handle(cachePath, cwh)
+	http.Handle(healthCheckPath, hwh)
 
 	logger.Infof("Starting server on :%d", port)
 
