@@ -4,12 +4,23 @@ import (
 	"runtime"
 	"sync"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 const (
 	defaultItemTTL         time.Duration = 30 * time.Minute
 	defaultCleanupInterval time.Duration = 60 * time.Minute
 )
+
+var (
+	logger *log.Logger
+)
+
+func init() {
+	logger = log.New()
+	logger.SetFormatter(&log.JSONFormatter{})
+}
 
 type item struct {
 	value string
@@ -29,10 +40,12 @@ func (mc *MemCache) Get(k string) (string, bool) {
 	mc.mu.RLock()
 	i, exist := mc.items[k]
 	if !exist {
+		logger.Tracef("key=%s not found", k)
 		mc.mu.RUnlock()
 		return "", false
 	}
 	if time.Now().UnixNano() > i.ttl {
+		logger.Tracef("key=%s is expired", k)
 		mc.mu.RUnlock()
 		return "", false
 	}
@@ -58,11 +71,16 @@ func (mc *MemCache) delete(k string) {
 func (mc *MemCache) evictExpired() {
 	now := time.Now().UnixNano()
 	mc.mu.Lock()
+	logger.Trace("Expired key eviction in progress...")
+	totalEvicted := 0
 	for k, v := range mc.items {
 		if now > v.ttl {
+			logger.Tracef("Evicting key=%s", k)
 			mc.delete(k)
+			totalEvicted++
 		}
 	}
+	logger.Tracef("Evicted %d expired keys", totalEvicted)
 	mc.mu.Unlock()
 }
 
@@ -113,6 +131,7 @@ func New() *MemCache {
 
 // Returns new MemCache with mentioned itemTTL and cleanupInterval
 func NewWith(itemTTL time.Duration, cleanupInterval time.Duration) *MemCache {
+	logger.Infof("Creating cache with ttl=%s and cleanupInterval=%s", itemTTL, cleanupInterval)
 	mc := newCache(itemTTL)
 	runCleaner(mc, cleanupInterval)
 	runtime.SetFinalizer(mc, stopCleaner)
