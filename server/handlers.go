@@ -2,7 +2,6 @@ package main
 
 import (
 	"io/ioutil"
-	"log"
 	"net/http"
 )
 
@@ -23,7 +22,7 @@ func getCacheHandler(w http.ResponseWriter, r *http.Request) {
 	if key == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("get cache request without key"))
-		log.Print("get cache request without key.")
+		logger.Info("get cache request without key.")
 		return
 	}
 	value, exist := cache.Get(key)
@@ -40,14 +39,14 @@ func postCacheHandler(w http.ResponseWriter, r *http.Request) {
 	if key == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("post cache request without key"))
-		log.Print("post cache request without key.")
+		logger.Info("post cache request without key.")
 		return
 	}
 	reqBody, _ := ioutil.ReadAll(r.Body)
 	if len(reqBody) == 0 {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("post cache request without value"))
-		log.Print("post cache request without value.")
+		logger.Info("post cache request without value.")
 		return
 	}
 	cache.Set(key, string(reqBody))

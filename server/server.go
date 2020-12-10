@@ -1,11 +1,11 @@
 package main
 
 import (
-	"log"
 	"net/http"
 	"strconv"
 
 	memcache "github.com/abhi195/go-mem-cache"
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -18,22 +18,29 @@ const (
 )
 
 var (
-	port  int
-	cache *memcache.MemCache
+	port   int
+	cache  *memcache.MemCache
+	logger *log.Logger
 )
 
 func init() {
 	cache = memcache.New()
 	port = 8080
+	logger = log.New()
+	logger.SetFormatter(&log.JSONFormatter{})
 }
 
 func main() {
 
-	// api paths
-	http.Handle(cachePath, cacheRequestHandler())
+	// cache request handler
+	h := cacheRequestHandler()
+	// httpsnooping wrapper handler
+	wh := loggingMiddlewareHandler(h)
+	// handling api paths
+	http.Handle(cachePath, wh)
 
-	log.Printf("starting server on :%d", port)
+	logger.Infof("Starting server on :%d", port)
 
 	strPort := ":" + strconv.Itoa(port)
-	log.Fatal("ListenAndServe: ", http.ListenAndServe(strPort, nil))
+	logger.Fatal("ListenAndServe: ", http.ListenAndServe(strPort, nil))
 }
