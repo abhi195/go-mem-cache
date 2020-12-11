@@ -9,15 +9,24 @@ func cacheRequestHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
-			getCacheHandler(w, r)
+			cacheGET(w, r)
 		case http.MethodPost:
-			postCacheHandler(w, r)
+			cachePOST(w, r)
 		}
 	})
 }
 
-// handles get requests.
-func getCacheHandler(w http.ResponseWriter, r *http.Request) {
+func healthCheckHandler() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			healthGET(w, r)
+		}
+	})
+}
+
+// handles cache get request
+func cacheGET(w http.ResponseWriter, r *http.Request) {
 	key := r.URL.Path[len(cachePath):]
 	if key == "" {
 		w.WriteHeader(http.StatusBadRequest)
@@ -33,8 +42,8 @@ func getCacheHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(value))
 }
 
-// handles post requests.
-func postCacheHandler(w http.ResponseWriter, r *http.Request) {
+// handles cache post request
+func cachePOST(w http.ResponseWriter, r *http.Request) {
 	key := r.URL.Path[len(cachePath):]
 	if key == "" {
 		w.WriteHeader(http.StatusBadRequest)
@@ -51,4 +60,10 @@ func postCacheHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	cache.Set(key, string(reqBody))
 	w.WriteHeader(http.StatusCreated)
+}
+
+// handles healthcheck get request
+func healthGET(w http.ResponseWriter, r *http.Request) {
+	// simple check to see if endpoint is reachable
+	w.Write([]byte("OK"))
 }
