@@ -42,8 +42,14 @@ func main() {
 ### APIs
 
 ```bash
+# Cache get
 GET         /api/v1/cache/{key}
+# Cache post
 POST        /api/v1/cache/{key} # with plain text body for value
+# Healthcheck
+GET			/health
+# Metrics
+GET			/metrics
 ```
 
 Please import [go-mem-cache.postman_collection.json](https://github.com/abhi195/go-mem-cache/blob/master/go-mem-cache.postman_collection.json) for sample requests.
@@ -75,4 +81,3 @@ docker run --rm -i -p 8080:8080 go-mem-cache
 
 - Extend the cache to support more operations.
 - Swap custom cache implementation with widely used cache implementations like [github.com/patrickmn/go-cache](https://github.com/patrickmn/go-cache) or [github.com/allegro/bigcache](https://github.com/allegro/bigcache) which provides richer functionalities.
-- Http server logging interceptor to log requests & responses
