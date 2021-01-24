@@ -15,6 +15,9 @@ const (
 	apiVersion  = "v1"
 	apiBasePath = "/api/" + apiVersion + "/"
 
+	// health check path
+	healthCheckPath = "/health"
+
 	// path to cache.
 	cachePath = apiBasePath + "cache/"
 
@@ -40,12 +43,17 @@ func main() {
 	// publish metrics
 	initMetrics()
 
-	// cache request handler
-	h := cacheRequestHandler()
-	// httpsnooping wrapper handler
-	wh := loggingMiddlewareHandler(h)
+	// handlers
+	ch := cacheRequestHandler()
+	hh := healthCheckHandler()
+
+	// httpsnooping wrapper handlers
+	cwh := loggingMiddlewareHandler(ch)
+	hwh := loggingMiddlewareHandler(hh)
+
 	// handling api paths
-	http.Handle(cachePath, wh)
+	http.Handle(cachePath, cwh)
+	http.Handle(healthCheckPath, hwh)
 	http.Handle(metricPath, metric.Handler(metric.Exposed))
 
 	logger.Infof("Starting server on :%d", port)
