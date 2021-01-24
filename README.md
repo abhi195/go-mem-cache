@@ -46,10 +46,10 @@ func main() {
 GET         /api/v1/cache/{key}
 # Cache post
 POST        /api/v1/cache/{key} # with plain text body for value
-# Healthcheck
-GET			/health
+# HealthCheck
+GET         /health
 # Metrics
-GET			/metrics
+GET         /metrics
 ```
 
 Please import [go-mem-cache.postman_collection.json](https://github.com/abhi195/go-mem-cache/blob/master/go-mem-cache.postman_collection.json) for sample requests.
